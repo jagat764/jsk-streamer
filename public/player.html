@@ -13,15 +13,15 @@
   <video id="player" controls autoplay muted playsinline></video>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const src = params.get("src");
+    const params = new URLSearchParams(location.search);
+    const src = params.get("video");
     const poster = params.get("poster");
-    const video = document.getElementById("player");
+    const player = document.getElementById("player");
 
     if (src) {
-      video.src = `proxy.php?url=${encodeURIComponent(src)}&type=video`;
+      player.src = `https://api-jsk.ct.ws/pompom/proxy.php?url=${encodeURIComponent(src)}&type=video`;
       if (poster) {
-        video.poster = `proxy.php?url=${encodeURIComponent(poster)}&type=thumbnail`;
+        player.poster = `https://api-jsk.ct.ws/pompom/proxy.php?url=${encodeURIComponent(poster)}&type=thumbnail`;
       }
     } else {
       document.body.innerHTML = "<h1>No video provided.</h1>";
