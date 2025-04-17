@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>JSK 18+ Streamer</title>
   <style>
     body { background: var(--bg); color: var(--fg); font-family: Arial, sans-serif; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
@@ -126,10 +126,13 @@
       data.forEach(v => {
         const card = document.createElement('div');
         card.className = 'video-card';
+
         const video = document.createElement('video');
         video.src = v.video;
         video.poster = v.thumbnail;
         video.controls = true;
+        video.muted = true;
+        video.playsInline = true;
         video.preload = 'none';
         video.setAttribute('loading', 'lazy');
         video.style.maxHeight = '320px';
