@@ -2,29 +2,67 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <title>JSK 18+ Streaming</title>
+  <title>JSK 18+ Gallery</title>
   <style>
     body { background: #111; color: #fff; font-family: sans-serif; margin: 0; }
     h1 { text-align: center; padding: 20px; color: #ff3c00; }
-    #gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; padding: 20px; }
-    .card { background: #222; padding: 10px; border-radius: 8px; text-align: center; }
-    .card img { max-width: 100%; border-radius: 8px; }
-    .card a { text-decoration: none; color: #ff3c00; display: block; margin-top: 10px; }
-    input, button { padding: 10px; font-size: 16px; margin: 10px; }
-    .pagination { text-align: center; margin: 20px; }
-    .pagination button { margin: 0 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    #gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .card img {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .card a {
+      text-decoration: none;
+      color: #ff3c00;
+      display: block;
+      margin-top: 12px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+    }
+    .pagination {
+      text-align: center;
+      margin: 20px;
+    }
+    .pagination button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>JSK Streaming</h1>
+  <h1>JSK 18+ Streaming</h1>
   <div style="text-align:center;">
     <input type="text" id="query" placeholder="Search..." value="milf">
     <button onclick="searchNew()">Search</button>
   </div>
+
   <div id="gallery"></div>
+
   <div class="pagination">
     <button id="prevBtn" onclick="prevPage()">Previous</button>
-    <span id="pageNum">Page 1</span>
+    <span id="pageNum">Page 1</span>
     <button id="nextBtn" onclick="nextPage()">Next</button>
   </div>
 
@@ -37,16 +75,14 @@
       const data = await res.json();
 
       const gallery = document.getElementById('gallery');
-      gallery.innerHTML = ''; // clear previous results
+      gallery.innerHTML = '';
 
-      document.getElementById('pageNum').textContent = `Page ${page} — ${data.length} result(s)`;
-
-      // Disable prev/next buttons when necessary
+      document.getElementById('pageNum').textContent = `Page ${page} — ${data.length} result(s)`;
       document.getElementById('prevBtn').disabled = (page === 1);
       document.getElementById('nextBtn').disabled = (data.length === 0);
 
-      if (data.length === 0) {
-        gallery.innerHTML = "<p style='text-align:center; color: #999;'>No results found.</p>";
+      if (!data.length) {
+        gallery.innerHTML = "<p style='text-align:center; color:#999;'>No results found.</p>";
         return;
       }
 
@@ -56,10 +92,11 @@
 
         const img = document.createElement('img');
         img.src = v.thumbnail;
+        img.alt = 'Thumbnail';
 
         const link = document.createElement('a');
-        link.href = `play.html?src=${encodeURIComponent(v.video)}`;
-        link.textContent = 'Watch Video';
+        link.href = `play.html?src=${encodeURIComponent(v.video)}&poster=${encodeURIComponent(v.thumbnail)}`;
+        link.textContent = '▶ Watch';
 
         card.appendChild(img);
         card.appendChild(link);
