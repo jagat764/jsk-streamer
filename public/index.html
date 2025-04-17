@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>JSK 18+ Gallery</title>
+  <title>JSK Gallery</title>
   <style>
     body { background: #121212; color: white; font-family: sans-serif; margin: 0; }
     h1 { text-align: center; color: #ff3c00; margin-top: 20px; }
@@ -17,12 +17,12 @@
   </style>
 </head>
 <body>
-  <h1>JSK 18+ Gallery</h1>
+  <h1>JSK 18+ Streaming</h1>
   <div id="gallery"></div>
 
   <script>
     async function loadVideos() {
-      const res = await fetch("/api/search?q=milf&page=1");
+      const res = await fetch("https://jsk-stream.onrender.com/api/search?q=milf&page=1");
       const data = await res.json();
       const gallery = document.getElementById("gallery");
 
@@ -31,10 +31,10 @@
         card.className = "card";
 
         const img = document.createElement("img");
-        img.src = `proxy.php?url=${encodeURIComponent(v.thumbnail)}&type=thumbnail`;
+        img.src = `https://api-jsk.ct.ws/pompom/proxy.php?url=${encodeURIComponent(v.thumbnail)}&type=thumbnail`;
 
         const link = document.createElement("a");
-        link.href = `player.html?src=${encodeURIComponent(v.video)}&poster=${encodeURIComponent(v.thumbnail)}`;
+        link.href = `player.html?video=${encodeURIComponent(v.video)}&poster=${encodeURIComponent(v.thumbnail)}`;
         link.textContent = "▶ Play";
 
         card.appendChild(img);
