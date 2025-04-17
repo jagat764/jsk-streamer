@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>JSK Video Player</title>
+  <style>
+    body { background: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    video { max-width: 90%; max-height: 90vh; border: 4px solid #ff3c00; border-radius: 10px; }
+    h1 { color: white; }
+  </style>
+</head>
+<body>
+  <video id="player" controls autoplay muted playsinline crossOrigin="anonymous"></video>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const src = params.get('src');
+    const poster = params.get('poster');
+    const player = document.getElementById('player');
+
+    if (src) {
+      player.src = src;
+      if (poster) player.poster = poster;
+    } else {
+      document.body.innerHTML = '<h1>No video URL provided.</h1>';
+    }
+
+    player.addEventListener('error', e => {
+      console.error('Video load error:', e);
+      document.body.innerHTML = '<h1>Failed to load video.</h1>';
+    });
+  </script>
+</body>
+</html>
