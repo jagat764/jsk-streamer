@@ -1,185 +1,90 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JSK 18+ Streamer</title>
+  <meta charset="UTF-8">
+  <title>JSK 18+ Streaming</title>
   <style>
-    body { background: var(--bg); color: var(--fg); font-family: Arial, sans-serif; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
-    header { padding: 20px; background: var(--header-bg); text-align: center; }
-    h1 { margin: 0; color: #ff3c00; }
-    form { margin-top: 10px; }
-    input[type="text"] { padding: 10px; width: 200px; border-radius: 5px; border: none; }
-    button { padding: 10px 15px; background: #ff3c00; border: none; color: white; border-radius: 5px; cursor: pointer; }
-    #videos.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; padding: 16px; }
-    #videos.list { display: flex; flex-direction: column; gap: 16px; padding: 16px; }
-    .video-card { background: var(--card-bg); padding: 10px; border-radius: 8px; position: relative; }
-    .video-card video { width: 100%; border-radius: 8px; max-height: 320px; }
-    .video-title { margin: 8px 0 0 0; font-size: 14px; color: var(--text-muted); }
-    #loading { text-align: center; padding: 20px; color: #aaa; }
-    .toggle-theme, .toggle-view {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: #fff;
-      border: 2px solid #ccc;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-    .toggle-view { right: 60px; }
-    .download-btn {
-      position: absolute;
-      bottom: 40px;
-      right: 20px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #ff3c00;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-decoration: none;
-      font-size: 16px;
-      border: none;
-    }
-    .skeleton {
-      background: #333;
-      height: 200px;
-      border-radius: 8px;
-      animation: pulse 1s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      50% { opacity: 0.2; }
-      100% { opacity: 0.6; }
-    }
-
-    html[data-theme="dark"] {
-      --bg: #0e0e0e;
-      --fg: #fff;
-      --header-bg: #1a1a1a;
-      --card-bg: #1e1e1e;
-      --text-muted: #ccc;
-    }
-
-    html[data-theme="light"] {
-      --bg: #f0f0f0;
-      --fg: #000;
-      --header-bg: #fff;
-      --card-bg: #fff;
-      --text-muted: #555;
-    }
+    body { background: #111; color: #fff; font-family: sans-serif; margin: 0; }
+    h1 { text-align: center; padding: 20px; color: #ff3c00; }
+    #gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; padding: 20px; }
+    .card { background: #222; padding: 10px; border-radius: 8px; text-align: center; }
+    .card img { max-width: 100%; border-radius: 8px; }
+    .card a { text-decoration: none; color: #ff3c00; display: block; margin-top: 10px; }
+    input, button { padding: 10px; font-size: 16px; margin: 10px; }
+    .pagination { text-align: center; margin: 20px; }
+    .pagination button { margin: 0 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>JSK 18+ Streamer</h1>
-    <form id="searchForm">
-      <input type="text" id="queryInput" placeholder="Search..." required>
-      <button type="submit">Search</button>
-    </form>
-  </header>
-  <div class="toggle-theme" onclick="toggleTheme()"></div>
-  <div class="toggle-view" onclick="toggleView()"></div>
-  <main>
-    <div id="videos" class="grid"></div>
-    <div id="loading">Loading...</div>
-  </main>
+  <h1>JSK Streaming</h1>
+  <div style="text-align:center;">
+    <input type="text" id="query" placeholder="Search..." value="milf">
+    <button onclick="searchNew()">Search</button>
+  </div>
+  <div id="gallery"></div>
+  <div class="pagination">
+    <button id="prevBtn" onclick="prevPage()">Previous</button>
+    <span id="pageNum">Page 1</span>
+    <button id="nextBtn" onclick="nextPage()">Next</button>
+  </div>
 
   <script>
-    let page = 1;
-    let query = "milf";
-    let loading = false;
-    let isGrid = true;
+    let currentPage = 1;
 
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute("data-theme");
-      document.documentElement.setAttribute("data-theme", current === "dark" ? "light" : "dark");
-    }
-
-    function toggleView() {
-      isGrid = !isGrid;
-      const container = document.getElementById('videos');
-      container.className = isGrid ? 'grid' : 'list';
-    }
-
-    async function loadMore() {
-      if (loading) return;
-      loading = true;
-      document.getElementById('loading').style.display = 'block';
-
-      const container = document.getElementById('videos');
-      for (let i = 0; i < 6; i++) {
-        const skel = document.createElement('div');
-        skel.className = 'skeleton';
-        container.appendChild(skel);
-      }
-
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&page=${page}`);
+    async function loadResults(page = 1) {
+      const q = document.getElementById('query').value;
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&page=${page}`);
       const data = await res.json();
-      document.querySelectorAll('.skeleton').forEach(el => el.remove());
+
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = ''; // clear previous results
+
+      document.getElementById('pageNum').textContent = `Page ${page} — ${data.length} result(s)`;
+
+      // Disable prev/next buttons when necessary
+      document.getElementById('prevBtn').disabled = (page === 1);
+      document.getElementById('nextBtn').disabled = (data.length === 0);
+
+      if (data.length === 0) {
+        gallery.innerHTML = "<p style='text-align:center; color: #999;'>No results found.</p>";
+        return;
+      }
 
       data.forEach(v => {
         const card = document.createElement('div');
-        card.className = 'video-card';
+        card.className = 'card';
 
-        const video = document.createElement('video');
-        video.src = v.video;
-        video.poster = v.thumbnail;
-        video.controls = true;
-        video.muted = true;
-        video.playsInline = true;
-        video.preload = 'none';
-        video.setAttribute('loading', 'lazy');
-        video.style.maxHeight = '320px';
+        const img = document.createElement('img');
+        img.src = v.thumbnail;
 
-        video.addEventListener('play', () => {
-          document.querySelectorAll('video').forEach(el => {
-            if (el !== video) el.pause();
-          });
-        });
+        const link = document.createElement('a');
+        link.href = `play.html?src=${encodeURIComponent(v.video)}`;
+        link.textContent = 'Watch Video';
 
-        const title = document.createElement('div');
-        title.className = 'video-title';
-        title.textContent = v.title || 'BY:- JSK';
-
-        const downloadBtn = document.createElement('a');
-        downloadBtn.className = 'download-btn';
-        downloadBtn.href = v.video;
-        downloadBtn.download = '';
-        downloadBtn.innerHTML = '↓';
-        downloadBtn.title = 'Download';
-
-        card.appendChild(video);
-        card.appendChild(title);
-        card.appendChild(downloadBtn);
-        container.appendChild(card);
+        card.appendChild(img);
+        card.appendChild(link);
+        gallery.appendChild(card);
       });
-
-      page++;
-      loading = false;
-      document.getElementById('loading').style.display = 'none';
     }
 
-    window.addEventListener('scroll', () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-        loadMore();
+    function nextPage() {
+      currentPage++;
+      loadResults(currentPage);
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        loadResults(currentPage);
       }
-    });
+    }
 
-    document.getElementById('searchForm').addEventListener('submit', e => {
-      e.preventDefault();
-      query = document.getElementById('queryInput').value;
-      page = 1;
-      document.getElementById('videos').innerHTML = '';
-      loadMore();
-    });
+    function searchNew() {
+      currentPage = 1;
+      loadResults(currentPage);
+    }
 
-    loadMore();
+    loadResults(currentPage);
   </script>
 </body>
 </html>
