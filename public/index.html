@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>JSK 18+ Gallery</title>
   <style>
     body { background: #111; color: #fff; font-family: sans-serif; margin: 0; }
@@ -19,73 +19,34 @@
       padding: 15px;
       border-radius: 10px;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     .card img {
       width: 100%;
-      max-width: 100%;
       border-radius: 8px;
       object-fit: cover;
     }
     .card a {
       text-decoration: none;
       color: #ff3c00;
-      display: block;
-      margin-top: 12px;
       font-size: 18px;
       font-weight: bold;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 10px;
-    }
-    .pagination {
-      text-align: center;
-      margin: 20px;
-    }
-    .pagination button {
-      margin: 0 10px;
+      display: inline-block;
+      margin-top: 12px;
       padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
+      border: 2px solid #ff3c00;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
-  <h1>JSK STREAMING</h1>
-  <div style="text-align:center;">
-    <input type="text" id="query" placeholder="Search..." value="milf">
-    <button onclick="searchNew()">Search</button>
-  </div>
-
+  <h1>JSK Stream Gallery</h1>
   <div id="gallery"></div>
 
-  <div class="pagination">
-    <button id="prevBtn" onclick="prevPage()">Previous</button>
-    <span id="pageNum">Page 1</span>
-    <button id="nextBtn" onclick="nextPage()">Next</button>
-  </div>
-
   <script>
-    let currentPage = 1;
-
-    async function loadResults(page = 1) {
-      const q = document.getElementById('query').value;
-      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&page=${page}`);
+    async function loadVideos() {
+      const res = await fetch('/api/search?q=milf&page=1');
       const data = await res.json();
-
       const gallery = document.getElementById('gallery');
-      gallery.innerHTML = '';
-
-      document.getElementById('pageNum').textContent = `Page ${page} — ${data.length} result(s)`;
-      document.getElementById('prevBtn').disabled = (page === 1);
-      document.getElementById('nextBtn').disabled = (data.length === 0);
-
-      if (!data.length) {
-        gallery.innerHTML = "<p style='text-align:center; color:#999;'>No results found.</p>";
-        return;
-      }
 
       data.forEach(v => {
         const card = document.createElement('div');
@@ -94,12 +55,12 @@
         const img = document.createElement('img');
         img.src = v.thumbnail;
         img.alt = 'Thumbnail';
+        img.loading = 'lazy';
         img.onerror = () => img.src = 'https://via.placeholder.com/480x270?text=No+Thumbnail';
 
         const link = document.createElement('a');
-        // FIXED: pass correct video link in src, and poster (thumbnail)
-        link.href = `play.html?src=${encodeURIComponent(v.video)}&poster=${encodeURIComponent(v.thumbnail)}`;
-        link.textContent = '▶ Watch';
+        link.href = `player.html?src=${encodeURIComponent(v.video)}&poster=${encodeURIComponent(v.thumbnail)}`;
+        link.textContent = '▶ Play';
 
         card.appendChild(img);
         card.appendChild(link);
@@ -107,24 +68,7 @@
       });
     }
 
-    function nextPage() {
-      currentPage++;
-      loadResults(currentPage);
-    }
-
-    function prevPage() {
-      if (currentPage > 1) {
-        currentPage--;
-        loadResults(currentPage);
-      }
-    }
-
-    function searchNew() {
-      currentPage = 1;
-      loadResults(1);
-    }
-
-    loadResults(currentPage);
+    loadVideos();
   </script>
 </body>
 </html>
