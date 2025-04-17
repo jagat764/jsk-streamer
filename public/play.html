@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>JSK Video Player</title>
+  <style>
+    body { background: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    video { max-width: 90%; max-height: 90vh; border: 4px solid #ff3c00; border-radius: 10px; }
+    h1 { color: white; text-align: center; }
+  </style>
+</head>
+<body>
+  <video id="player" controls autoplay muted playsinline></video>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const src = params.get('src');
+    const player = document.getElementById('player');
+
+    if (src) {
+      player.src = src;
+    } else {
+      document.body.innerHTML = '<h1>No video provided.</h1>';
+    }
+  </script>
+</body>
+</html>
