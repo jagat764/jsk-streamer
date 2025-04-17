@@ -4,63 +4,38 @@
   <meta charset="UTF-8" />
   <title>JSK 18+ Gallery</title>
   <style>
-    body { background: #111; color: #fff; font-family: sans-serif; margin: 0; }
-    h1 { text-align: center; padding: 20px; color: #ff3c00; }
-    #gallery {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      padding: 20px;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .card {
-      background: #222;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-    }
-    .card img {
-      width: 100%;
-      border-radius: 8px;
-      object-fit: cover;
-    }
+    body { background: #121212; color: white; font-family: sans-serif; margin: 0; }
+    h1 { text-align: center; color: #ff3c00; margin-top: 20px; }
+    #gallery { max-width: 600px; margin: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .card { background: #222; border-radius: 10px; padding: 10px; text-align: center; }
+    .card img { width: 100%; border-radius: 8px; }
     .card a {
-      text-decoration: none;
-      color: #ff3c00;
-      font-size: 18px;
-      font-weight: bold;
-      display: inline-block;
-      margin-top: 12px;
-      padding: 10px 20px;
-      border: 2px solid #ff3c00;
-      border-radius: 6px;
+      display: inline-block; margin-top: 10px; padding: 10px 20px;
+      color: #ff3c00; border: 2px solid #ff3c00; border-radius: 6px;
+      text-decoration: none; font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>JSK Stream Gallery</h1>
+  <h1>JSK 18+ Gallery</h1>
   <div id="gallery"></div>
 
   <script>
     async function loadVideos() {
-      const res = await fetch('/api/search?q=milf&page=1');
+      const res = await fetch("/api/search?q=milf&page=1");
       const data = await res.json();
-      const gallery = document.getElementById('gallery');
+      const gallery = document.getElementById("gallery");
 
       data.forEach(v => {
-        const card = document.createElement('div');
-        card.className = 'card';
+        const card = document.createElement("div");
+        card.className = "card";
 
-        const img = document.createElement('img');
-        img.src = v.thumbnail;
-        img.alt = 'Thumbnail';
-        img.loading = 'lazy';
-        img.onerror = () => img.src = 'https://via.placeholder.com/480x270?text=No+Thumbnail';
+        const img = document.createElement("img");
+        img.src = `proxy.php?url=${encodeURIComponent(v.thumbnail)}&type=thumbnail`;
 
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = `player.html?src=${encodeURIComponent(v.video)}&poster=${encodeURIComponent(v.thumbnail)}`;
-        link.textContent = '▶ Play';
+        link.textContent = "▶ Play";
 
         card.appendChild(img);
         card.appendChild(link);
